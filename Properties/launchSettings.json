@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "af_durable_dotnet_isolated": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7202",
+      "launchBrowser": false
+    }
+  }
+}
