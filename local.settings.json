@@ -2,13 +2,14 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "DurableStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
   },
   "durableTask": {
     "hubName": "DurableFunctionsHub",
     "storageProvider": {
       "type": "AzureStorage",
-      "connectionStringName": "AzureWebJobsStorage"
+      "connectionStringName": "DurableStorage"
     }
   }
 }
