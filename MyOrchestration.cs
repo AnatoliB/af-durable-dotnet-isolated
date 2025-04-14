@@ -3,6 +3,9 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace Company.Function
 {
@@ -13,15 +16,22 @@ namespace Company.Function
             [OrchestrationTrigger] TaskOrchestrationContext context)
         {
             ILogger logger = context.CreateReplaySafeLogger(nameof(MyOrchestration));
-            logger.LogInformation("Saying hello.");
+            logger.LogInformation("Starting fan-out.");
             var outputs = new List<string>();
-
-            // Replace name and input with values relevant for your Durable Functions Activity
-            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "London"));
-
-            // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
+            
+            var tasks = new List<Task<string>>();
+            for (int i = 1; i <= 1000; i++)
+            {
+                tasks.Add(context.CallActivityAsync<string>(nameof(SayHello), $"Activity{i}"));
+            }
+            
+            // Wait for all tasks to complete
+            string[] results = await Task.WhenAll(tasks);
+            
+            // Add results to outputs
+            outputs.AddRange(results);
+            
+            logger.LogInformation($"Completed {outputs.Count} activities");
             return outputs;
         }
 
